@@ -1,6 +1,6 @@
 {
-  "name": "playwright-viewer",
-  "version": "1.0.0",
+  "name": "@rahul_1818/testreport",
+  "version": "1.0.1",
   "description": "Beautiful, lightweight dashboard for viewing Playwright test reports with advanced analytics",
   "main": "index.js",
   "bin": {
@@ -31,13 +31,20 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nyasa719/playwright-viewer.git"
+    "url": "git+https://github.com/rahul1818/Testreport-io.git"
   },
   "bugs": {
-    "url": "https://github.com/Nyasa719/playwright-viewer/issues"
+    "url": "https://github.com/rahul1818/Testreport-io/issues"
   },
-  "homepage": "https://github.com/Nyasa719/playwright-viewer#readme",
+  "homepage": "https://github.com/rahul1818/Testreport-io#readme",
   "dependencies": {
     "playwright-viewer": "file:playwright-viewer-1.0.0.tgz"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "Playwright test report viewer"
   }
 }
