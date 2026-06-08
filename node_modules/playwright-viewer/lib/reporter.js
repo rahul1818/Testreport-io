@@ -1,0 +1,122 @@
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Lightweight Playwright reporter that emits a single JSON file per run
+ * under custom-report/<runId>/results.json. The JSON captures run metadata,
+ * test outcomes, timing, errors, retries, attachments, stdout/stderr and
+ * basic analytics (pass/fail counts, duration totals).
+ *
+ * Intended as a backend feed for a custom UI/analytics layer.
+ */
+class CustomReporter {
+  constructor(options = {}) {
+    this.options = {
+      // Keep this relative; resolve against process.cwd() when writing.
+      outputDir: options.outputDir || 'custom-report',
+      fileName: options.fileName || 'results.json',
+    };
+    this.run = {
+      runId: `${Date.now()}`,
+      startedAt: null,
+      finishedAt: null,
+      projects: [],
+      totals: {
+        tests: 0,
+        passed: 0,
+        failed: 0,
+        skipped: 0,
+        timedOut: 0,
+        flaky: 0,
+        durationMs: 0,
+      },
+      tests: [],
+      stdout: [],
+      stderr: [],
+    };
+  }
+
+  onBegin(config, suite) {
+    this.run.startedAt = new Date().toISOString();
+    this.run.projects = config.projects.map((p) => p.name || 'default');
+    this.run.testDir = config.testDir;
+    this.run.totalTestFiles = suite.allTests().length;
+    this._ensureOutputDir();
+  }
+
+  onStdOut(chunk) {
+    this.run.stdout.push(chunk.toString());
+  }
+
+  onStdErr(chunk) {
+    this.run.stderr.push(chunk.toString());
+  }
+
+  onTestEnd(test, result) {
+    const status = result.status;
+    const entry = {
+      id: test.id,
+      title: test.title,
+      fullTitle: test.titlePath(),
+      file: test.location?.file,
+      line: test.location?.line,
+      column: test.location?.column,
+      annotations: test.annotations || [],
+      retries: result.retry,
+      status,
+      expectedStatus: test.expectedStatus,
+      durationMs: result.duration,
+      startedAt: result.startTime?.toISOString?.() || null,
+      finishedAt: result.startTime
+        ? new Date(result.startTime.getTime() + result.duration).toISOString()
+        : null,
+      error: result.error || null,
+      attachments: (result.attachments || []).map((a) => ({
+        name: a.name,
+        contentType: a.contentType,
+        path: a.path || null,
+        body: a.body ? a.body.toString('base64') : undefined,
+      })),
+      steps: (result.steps || []).map((step) => ({
+        title: step.title,
+        category: step.category,
+        startTime: step.startTime?.toISOString?.() || null,
+        durationMs: step.duration,
+        error: step.error || null,
+      })),
+    };
+
+    this.run.tests.push(entry);
+    this._updateTotals(status, result.duration);
+  }
+
+  async onEnd() {
+    this.run.finishedAt = new Date().toISOString();
+    this._writeRun();
+  }
+
+  _ensureOutputDir() {
+    this.baseDir = path.resolve(process.cwd(), this.options.outputDir, this.run.runId);
+    if (!fs.existsSync(this.baseDir)) {
+      fs.mkdirSync(this.baseDir, { recursive: true });
+    }
+  }
+
+  _updateTotals(status, duration) {
+    this.run.totals.tests += 1;
+    this.run.totals.durationMs += duration || 0;
+    if (status === 'passed') this.run.totals.passed += 1;
+    else if (status === 'failed') this.run.totals.failed += 1;
+    else if (status === 'skipped') this.run.totals.skipped += 1;
+    else if (status === 'timedOut') this.run.totals.timedOut += 1;
+    else if (status === 'flaky') this.run.totals.flaky += 1;
+  }
+
+  _writeRun() {
+    const filePath = path.join(this.baseDir, this.options.fileName);
+    fs.writeFileSync(filePath, JSON.stringify(this.run, null, 2), 'utf-8');
+    console.log(`Custom report written to ${filePath}`);
+  }
+}
+
+module.exports = CustomReporter;

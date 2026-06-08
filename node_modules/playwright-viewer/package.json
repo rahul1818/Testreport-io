@@ -1,0 +1,39 @@
+{
+  "name": "playwright-viewer",
+  "version": "1.0.0",
+  "description": "Beautiful, lightweight dashboard for viewing Playwright test reports with advanced analytics",
+  "main": "index.js",
+  "bin": {
+    "playwright-viewer": "bin/playwright-viewer"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./reporter": "./lib/reporter.js",
+    "./viewer": "./lib/viewer.js"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "playwright",
+    "test-reports",
+    "dashboard",
+    "testing",
+    "e2e",
+    "automation"
+  ],
+  "author": "Nyasa Modi <nyasawork719@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nyasa719/playwright-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nyasa719/playwright-viewer/issues"
+  },
+  "homepage": "https://github.com/Nyasa719/playwright-viewer#readme"
+}
