@@ -1,6 +1,6 @@
 {
-  "name": "@rahul_1818/testreport",
-  "version": "1.0.2",
+  "name": "testreport.io-io",
+  "version": "1.0.1",
   "description": "Beautiful, lightweight dashboard for viewing Playwright test reports with advanced analytics",
   "main": "index.js",
   "bin": {
@@ -37,9 +37,7 @@
     "url": "https://github.com/rahul1818/Testreport-io/issues"
   },
   "homepage": "https://github.com/rahul1818/Testreport-io#readme",
-  "dependencies": {
-    "playwright-viewer": "file:playwright-viewer-1.0.0.tgz"
-  },
+  "dependencies": {},
   "directories": {
     "lib": "lib"
   },

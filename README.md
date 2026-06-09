@@ -5,7 +5,7 @@ Beautiful, lightweight dashboard for viewing Playwright test reports with advanc
 ## Installation
 
 ```bash
-npm install --save-dev playwright-viewer
+npm install --save-dev testreport.io-io
 ```
 
 ## Quick Start
@@ -16,7 +16,7 @@ In `playwright.config.js`:
 
 ```javascript
 import { defineConfig, devices } from '@playwright/test';
-import CustomReporter from 'playwright-viewer/reporter';
+import CustomReporter from 'testreport.io-io/reporter';
 
 export default defineConfig({
   reporter: [
