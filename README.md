@@ -1,4 +1,4 @@
-# Playwright Viewer
+# ![](assets/1.svg) Playwright Viewer
 
 Beautiful, lightweight dashboard for viewing Playwright test reports with advanced analytics.
 
