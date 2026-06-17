@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+const { createServer } = require('../lib/viewer');
+const fs = require('fs');
+const path = require('path');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const command = args[0];
+
+if (command === 'serve') {
+  // Parse options
+  const options = {};
+  for (let i = 1; i < args.length; i += 2) {
+    const key = args[i];
+    const value = args[i + 1];
+    
+    if (key === '--port' || key === '-p') {
+      options.port = parseInt(value, 10);
+    } else if (key === '--report-dir' || key === '-d') {
+      options.reportDir = path.resolve(process.cwd(), value);
+    }
+  }
+  
+  const reportDir = options.reportDir || path.join(process.cwd(), 'custom-report');
+  const server = createServer({ ...options, reportDir });
+  const port = options.port || 4173;
+
+  const countRuns = () => {
+    if (!fs.existsSync(reportDir)) return 0;
+
+    return fs
+      .readdirSync(reportDir, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .filter((entry) => fs.existsSync(path.join(reportDir, entry.name, 'results.json')))
+      .length;
+  };
+
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`\nPort ${port} is already in use. Stop the other viewer first:`);
+      console.error(`  npx kill-port ${port}`);
+      console.error(`Or use another port: npx playwright-viewer serve --report-dir custom-report --port 4300\n`);
+      process.exit(1);
+    }
+
+    throw error;
+  });
+
+  server.listen(port, () => {
+    const runs = countRuns();
+
+    console.log(`\n🎯 Playwright Viewer running at http://localhost:${port}`);
+    console.log(`📁 Report folder: ${reportDir}`);
+    console.log(`📊 Runs found: ${runs}${runs ? '' : ' (no results.json yet — run tests first)'}\n`);
+  });
+} else {
+  console.log(`
+Usage: playwright-viewer <command>
+
+Commands:
+  serve              Start the report viewer server
+  serve --port 4300  Use custom port
+  serve -d ./reports Use custom report directory
+  `);
+  process.exit(1);
+}
