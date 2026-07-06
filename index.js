@@ -1,11 +1,11 @@
 /**
- * Main entry point for playwright-viewer package
- * 
+ * Main entry point for testreport.io-io package
+ *
  * Usage in playwright.config.js:
- *   import CustomReporter from 'playwright-viewer/reporter';
- * 
+ *   import CustomReporter from 'testreport.io-io/reporter';
+ *
  * Or:
- *   const { createServer } = require('playwright-viewer');
+ *   const { createServer } = require('testreport.io-io');
  */
 
 // Export the reporter (ES module)
