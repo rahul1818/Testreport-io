@@ -1,6 +1,6 @@
 {
   "name": "testreport.io-io",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Playwright HTML test report dashboard and custom reporter — live viewer, flaky tests, PDF/Excel export, and analytics",
   "main": "index.js",
   "bin": {
